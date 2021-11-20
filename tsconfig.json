@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "lib": [
+      "dom",
+      "esnext",
+      "ES2020.String"
+    ],
+    "moduleResolution": "node",
+    "rootDirs": [
+      "src"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": false
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "scripts",
+    "server"
+  ],
+  "include": [
+    "src"
+  ]
+}
