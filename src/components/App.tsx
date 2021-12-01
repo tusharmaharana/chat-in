@@ -1,10 +1,14 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
+import CreateRoom from "./CreateRoom";
+import VideoGrid from "./VideoGrid";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <h1>HELLO from the other side</h1>
-    </div>
+    <Routes>
+      <Route path="/*" element={<CreateRoom />} />
+      <Route path="/:roomId" element={<VideoGrid />} />
+    </Routes>
   );
 };
 
