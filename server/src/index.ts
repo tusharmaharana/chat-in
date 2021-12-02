@@ -1,8 +1,16 @@
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import keys from "./config/keys";
+
+interface Rooms {
+  [roomID: string]: string[];
+}
+
+interface SocketToRoom {
+  [socketID: string]: string;
+}
 
 const app = express();
 const httpServer = createServer(app);
@@ -13,8 +21,8 @@ const io = new Server(httpServer, {
   }
 });
 
-const users: any = {};
-const socketToRoom: any = {};
+const rooms: Rooms = {};
+const socketToRoom: SocketToRoom = {};
 
 app.use(
   cors({
@@ -26,20 +34,20 @@ app.enable("trust proxy");
 
 io.on("connection", socket => {
   socket.on("join room", roomID => {
-    if (users[roomID]) {
-      // const length = users[roomID].length;
-      // if (length === 4) {
-      //   socket.emit("room full");
-      //   return;
-      // }
-      users[roomID].push(socket.id);
+    if (rooms[roomID]) {
+      if (rooms[roomID].length === 10) {
+        socket.emit("room full");
+        return;
+      }
+      rooms[roomID].push(socket.id);
     } else {
-      users[roomID] = [socket.id];
+      rooms[roomID] = [socket.id];
     }
+    console.log(rooms[roomID]);
     socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users[roomID].filter((id: any) => id !== socket.id);
+    const roomsInThisRoom = rooms[roomID].filter((id: string) => id !== socket.id);
 
-    socket.emit("all users", usersInThisRoom);
+    socket.emit("all rooms", roomsInThisRoom);
   });
 
   socket.on("sending signal", payload => {
@@ -52,17 +60,13 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     const roomID = socketToRoom[socket.id];
-    let room = users[roomID];
+    let room = rooms[roomID];
     if (room) {
-      room = room.filter((id: any) => id !== socket.id);
-      users[roomID] = room;
+      room = room.filter((id: string) => id !== socket.id);
+      rooms[roomID] = room;
     }
     socket.broadcast.emit("user left", socket.id);
   });
-});
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Yo Man, you're there keep it up and always remember NOTHING LASTS FOREVER");
 });
 
 httpServer.listen(keys.port, () => console.log(`server is running on ${keys.port}`));
