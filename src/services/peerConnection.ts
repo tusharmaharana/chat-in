@@ -1,12 +1,22 @@
-import Peer from "simple-peer";
+import Peer, { Instance, SignalData } from "simple-peer";
+import { Socket } from "socket.io-client";
+import { IPayload, IPeers } from "../../types";
 
-const connectToPeer = (roomId: any, socketRef: any, peersRef: any, userVideo: any, setTotalPeers: any): any => {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+const connectToPeer = (
+  roomId: string,
+  socketRef: React.MutableRefObject<Socket>,
+  peersRef: React.MutableRefObject<IPeers[]>,
+  userVideo: React.MutableRefObject<HTMLVideoElement>,
+  setTotalPeers: React.Dispatch<React.SetStateAction<IPeers[]>>
+): void => {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
     userVideo.current.srcObject = stream;
+
     socketRef.current.emit("join room", roomId);
-    socketRef.current.on("all users", (users: any) => {
-      const peers: any = [];
-      users.forEach((userID: any) => {
+
+    socketRef.current.on("all users", (users: string[]) => {
+      const peers: IPeers[] = [];
+      users.forEach((userID: string) => {
         const peer = createPeer(userID, socketRef.current.id, stream);
         peersRef.current.push({
           peerID: userID,
@@ -14,10 +24,11 @@ const connectToPeer = (roomId: any, socketRef: any, peersRef: any, userVideo: an
         });
         peers.push({ peer, peerID: userID });
       });
+      // console.log("check 1", peers);
       setTotalPeers(peers);
     });
 
-    socketRef.current.on("user joined", (payload: any) => {
+    socketRef.current.on("user joined", (payload: IPayload) => {
       const peer = addPeer(payload.signal, payload.callerID, stream);
       peersRef.current.push({
         peerID: payload.callerID,
@@ -27,25 +38,30 @@ const connectToPeer = (roomId: any, socketRef: any, peersRef: any, userVideo: an
         peer,
         peerID: payload.callerID
       };
-
-      setTotalPeers((users: any) => [...users, peerObj]);
+      // console.log("peer added", peersRef);
+      setTotalPeers((users: IPeers[]): IPeers[] => {
+        if (!users.find((user: IPeers) => user.peerID === peerObj.peerID)) return [...users, peerObj];
+        return [...users];
+      });
     });
 
-    socketRef.current.on("receiving returned signal", (payload: any) => {
-      const item = peersRef.current.find((p: any) => p.peerID === payload.id);
+    socketRef.current.on("receiving returned signal", (payload: IPayload) => {
+      const item = peersRef.current.find((p: IPeers) => p.peerID === payload.id);
       item.peer.signal(payload.signal);
     });
 
-    socketRef.current.on("user left", (id: any) => {
-      const peerObj = peersRef.current.find((p: any) => p.peerID === id);
+    socketRef.current.on("user left", (id: string) => {
+      const peerObj = peersRef.current.find((p: IPeers) => p.peerID === id);
       peerObj?.peer.destroy();
-      const peers = peersRef.current.filter((p: any) => p.peerID !== id);
+      // console.log("disconnected user ", peerObj);
+      const peers = peersRef.current.filter((p: IPeers) => p.peerID !== id);
       peersRef.current = peers;
+      // console.log("remaining peer", peers);
       setTotalPeers(peers);
     });
   });
 
-  const createPeer = (userToSignal: any, callerID: any, stream: any): any => {
+  const createPeer = (userToSignal: string, callerID: string, stream: MediaStream): Instance => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -59,7 +75,7 @@ const connectToPeer = (roomId: any, socketRef: any, peersRef: any, userVideo: an
     return peer;
   };
 
-  function addPeer(incomingSignal: any, callerID: any, stream: any): any {
+  function addPeer(incomingSignal: SignalData, callerID: string, stream: MediaStream): Instance {
     const peer = new Peer({
       initiator: false,
       trickle: false,
@@ -74,8 +90,6 @@ const connectToPeer = (roomId: any, socketRef: any, peersRef: any, userVideo: an
 
     return peer;
   }
-
-  return { userVideo };
 };
 
 export default connectToPeer;

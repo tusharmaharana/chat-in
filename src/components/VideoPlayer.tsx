@@ -1,10 +1,21 @@
-import React, { useEffect, useRef } from "react";
+import React, { ReactElement, useEffect, useRef } from "react";
+import { Instance } from "simple-peer";
+import { IPeers } from "../../types";
 
-const Video = (props: any): any => {
-  const ref = useRef(null);
+interface Props {
+  userVideo: React.MutableRefObject<HTMLVideoElement>;
+  totalPeers: IPeers[];
+}
+
+interface VideoProps {
+  peer: Instance;
+}
+
+const Video = (props: VideoProps): ReactElement => {
+  const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    props.peer.on("stream", (stream: any) => {
+    props?.peer.on("stream", (stream: MediaStream) => {
       ref.current.srcObject = stream;
     });
   }, []);
@@ -16,12 +27,12 @@ const Video = (props: any): any => {
   );
 };
 
-const VideoPlayer: React.FC<any> = (props: any) => {
+const VideoPlayer: React.FC<Props> = (props: Props) => {
   const { userVideo, totalPeers } = props;
   return (
     <div>
       <video muted ref={userVideo} autoPlay playsInline height="300" width="300" />
-      {totalPeers.map((peer: any) => {
+      {totalPeers.map((peer: IPeers) => {
         return <Video key={peer.peerID} peer={peer.peer} />;
       })}
     </div>
