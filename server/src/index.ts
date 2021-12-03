@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 import keys from "./config/keys";
 
 interface Rooms {
-  [roomID: string]: string[];
+  [roomId: string]: string[];
 }
 
 interface SocketToRoom {
@@ -33,21 +33,21 @@ app.use(
 app.enable("trust proxy");
 
 io.on("connection", socket => {
-  socket.on("join room", roomID => {
-    if (rooms[roomID]) {
-      if (rooms[roomID].length === 10) {
+  socket.on("join room", roomId => {
+    if (rooms[roomId]) {
+      if (rooms[roomId].length === 10) {
         socket.emit("room full");
         return;
       }
-      rooms[roomID].push(socket.id);
+      rooms[roomId].push(socket.id);
     } else {
-      rooms[roomID] = [socket.id];
+      rooms[roomId] = [socket.id];
     }
-    console.log(rooms[roomID]);
-    socketToRoom[socket.id] = roomID;
-    const roomsInThisRoom = rooms[roomID].filter((id: string) => id !== socket.id);
+    console.log(rooms[roomId]);
+    socketToRoom[socket.id] = roomId;
+    const usersInThisRoom = rooms[roomId].filter((id: string) => id !== socket.id);
 
-    socket.emit("all rooms", roomsInThisRoom);
+    socket.emit("all users", usersInThisRoom);
   });
 
   socket.on("sending signal", payload => {
@@ -59,11 +59,11 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    const roomID = socketToRoom[socket.id];
-    let room = rooms[roomID];
+    const roomId = socketToRoom[socket.id];
+    let room = rooms[roomId];
     if (room) {
       room = room.filter((id: string) => id !== socket.id);
-      rooms[roomID] = room;
+      rooms[roomId] = room;
     }
     socket.broadcast.emit("user left", socket.id);
   });
