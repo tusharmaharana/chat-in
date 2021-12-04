@@ -2,14 +2,17 @@ import Peer, { Instance, SignalData } from "simple-peer";
 import { Socket } from "socket.io-client";
 import { IPayload, IPeers } from "../../types";
 
-const connectToPeer = (
-  roomId: string,
-  socketRef: React.MutableRefObject<Socket>,
-  peersRef: React.MutableRefObject<IPeers[]>,
-  userVideo: React.MutableRefObject<HTMLVideoElement>,
-  setTotalPeers: React.Dispatch<React.SetStateAction<IPeers[]>>
-): void => {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+interface Props {
+  roomId: string;
+  socketRef: React.MutableRefObject<Socket>;
+  peersRef: React.MutableRefObject<IPeers[]>;
+  userVideo: React.MutableRefObject<HTMLVideoElement>;
+  setTotalPeers: React.Dispatch<React.SetStateAction<IPeers[]>>;
+}
+
+const connectToPeer = ({ roomId, socketRef, peersRef, userVideo, setTotalPeers }: Props): void => {
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+    // console.log(stream.getVideoTracks()[0].enabled);
     userVideo.current.srcObject = stream;
 
     socketRef.current.emit("join room", roomId);

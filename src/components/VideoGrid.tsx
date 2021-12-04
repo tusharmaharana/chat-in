@@ -15,7 +15,7 @@ const VideoGrid: React.FC = () => {
 
   useEffect(() => {
     socketRef.current = io("http://localhost:5000");
-    connectToPeer(roomId, socketRef, peersRef, userVideo, setTotalPeers);
+    connectToPeer({ roomId, socketRef, peersRef, userVideo, setTotalPeers });
   }, []);
 
   // console.log(peersRef);
@@ -24,7 +24,7 @@ const VideoGrid: React.FC = () => {
   return (
     <>
       <VideoPlayer userVideo={userVideo} totalPeers={totalPeers} />
-      <RoomFooter userVideo={userVideo} />
+      <RoomFooter userVideo={userVideo} socketRef={socketRef} />
     </>
   );
 };
