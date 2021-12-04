@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { io, Socket } from "socket.io-client";
 import { IPeers } from "../../types";
 import connectToPeer from "../services/peerConnection";
+import RoomFooter from "./RoomFooter";
 import VideoPlayer from "./VideoPlayer";
 
 const VideoGrid: React.FC = () => {
@@ -20,7 +21,12 @@ const VideoGrid: React.FC = () => {
   // console.log(peersRef);
   // console.log(totalPeers);
 
-  return <VideoPlayer userVideo={userVideo} totalPeers={totalPeers} />;
+  return (
+    <>
+      <VideoPlayer userVideo={userVideo} totalPeers={totalPeers} />
+      <RoomFooter userVideo={userVideo} />
+    </>
+  );
 };
 
 export default VideoGrid;
