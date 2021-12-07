@@ -1,5 +1,7 @@
+import styled from "@emotion/styled";
 import React, { ReactElement, useState } from "react";
 import { useNavigate } from "react-router";
+import { Button, Popup } from "semantic-ui-react";
 import { Socket } from "socket.io-client";
 
 interface Props {
@@ -16,12 +18,12 @@ const RoomFooter: React.FC<Props> = ({ userVideo, socketRef }: Props): ReactElem
   // console.log(stream.getTracks());
 
   const handleAudioClick = (): void => {
-    stream.getAudioTracks()[0].enabled = audioMute;
+    if (stream) stream.getAudioTracks()[0].enabled = audioMute;
     setAudioMute((prev: boolean) => !prev);
   };
 
   const handleVideoClick = (): void => {
-    stream.getVideoTracks()[0].enabled = videoHide;
+    if (stream) stream.getVideoTracks()[0].enabled = videoHide;
     setVideoHide((prev: boolean) => !prev);
   };
 
@@ -32,18 +34,56 @@ const RoomFooter: React.FC<Props> = ({ userVideo, socketRef }: Props): ReactElem
   };
 
   return (
-    <div>
-      <button type="button" onClick={handleAudioClick}>
-        {audioMute ? "unmute" : "mute"}
-      </button>
-      <button type="button" onClick={handleVideoClick}>
-        {videoHide ? "show video" : "hide video"}
-      </button>
-      <button type="button" onClick={handleEndClick}>
-        end call
-      </button>
-    </div>
+    <Container>
+      <Popup
+        content={audioMute ? "Turn On Microphone" : "Turn Off Microphone"}
+        trigger={
+          <Button
+            icon={audioMute ? "microphone slash" : "microphone"}
+            color={audioMute ? "red" : null}
+            circular
+            size="large"
+            onClick={handleAudioClick}
+          />
+        }
+        position="top center"
+      />
+      <Popup
+        content={videoHide ? "Turn On Camera" : "Turn Off Camera"}
+        trigger={
+          <Button
+            icon={videoHide ? "video slash" : "video"}
+            circular
+            color={videoHide ? "red" : null}
+            size="large"
+            onClick={handleVideoClick}
+          />
+        }
+        position="top center"
+      />
+      <Popup
+        content="Leave Call"
+        trigger={
+          <Button
+            icon="call"
+            color="red"
+            size="large"
+            style={{ borderRadius: "2rem", width: "4rem" }}
+            onClick={handleEndClick}
+          />
+        }
+        position="top center"
+      />
+    </Container>
   );
 };
+
+const Container = styled.div`
+  position: absolute;
+  width: 100vw;
+  bottom: 2rem;
+  display: flex;
+  justify-content: center;
+`;
 
 export default RoomFooter;
