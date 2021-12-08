@@ -15,7 +15,7 @@ const Room: React.FC = () => {
   const peersRef = useRef<IPeers[]>([]);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io(process.env.REACT_APP_IO_SERVER);
     connectToPeer({ roomId, socketRef, peersRef, userVideo, setTotalPeers });
   }, []);
 
