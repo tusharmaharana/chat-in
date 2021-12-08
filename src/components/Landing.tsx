@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { Button, Input } from "semantic-ui-react";
 import { v4 as uuidV4 } from "uuid";
 
-const CreateRoom = (): ReactElement => {
+const Landing = (): ReactElement => {
   const [value, setValue] = useState<string>(undefined);
   // setMounted(true);
   const navigate = useNavigate();
@@ -36,4 +36,4 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
 `;
-export default CreateRoom;
+export default Landing;
