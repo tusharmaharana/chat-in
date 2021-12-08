@@ -43,6 +43,7 @@ const RoomFooter: React.FC<Props> = ({ userVideo, socketRef }: Props): ReactElem
             color={audioMute ? "red" : null}
             circular
             size="large"
+            style={{ marginRight: "1rem" }}
             onClick={handleAudioClick}
           />
         }
@@ -56,6 +57,7 @@ const RoomFooter: React.FC<Props> = ({ userVideo, socketRef }: Props): ReactElem
             circular
             color={videoHide ? "red" : null}
             size="large"
+            style={{ marginRight: "1rem" }}
             onClick={handleVideoClick}
           />
         }
@@ -79,11 +81,10 @@ const RoomFooter: React.FC<Props> = ({ userVideo, socketRef }: Props): ReactElem
 };
 
 const Container = styled.div`
-  position: absolute;
-  width: 100vw;
-  bottom: 2rem;
+  width: 100%;
   display: flex;
   justify-content: center;
+  margin: 1rem 0 1.5rem 0;
 `;
 
 export default RoomFooter;
