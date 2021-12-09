@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { ReactElement, useState } from "react";
 import { useNavigate } from "react-router";
-import { Button, Input } from "semantic-ui-react";
+import { Button, Form, Input } from "semantic-ui-react";
 import { v4 as uuidV4 } from "uuid";
 
 const Landing = (): ReactElement => {
@@ -22,10 +22,12 @@ const Landing = (): ReactElement => {
   return (
     <Container>
       <Button content="Create a new Room" onClick={handleCreateClick} primary />
-      <Input type="text" placeholder="Enter Room Code" onChange={(event): void => setValue(event.target.value)}>
-        <input />
-        <Button disabled={!value} content="Join" onClick={(event): void => handleJoinClick(event)} />
-      </Input>
+      <Form>
+        <Input type="text" placeholder="Enter Room Code" onChange={(event): void => setValue(event.target.value)}>
+          <input />
+          <Button disabled={!value} content="Join" onClick={(event): void => handleJoinClick(event)} />
+        </Input>
+      </Form>
     </Container>
   );
 };
