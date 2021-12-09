@@ -32,9 +32,9 @@ const Video = (props: VideoProps): ReactElement => {
 };
 
 const renderVideoSize = (count: number): string => {
-  const rem: number = 90 / count;
-  if (rem === 90) return "90%";
-  if (rem >= 22 && rem < 90) return "44%";
+  if (count === 1) return "80%";
+  if (count === 2) return "49%";
+  if (count === 3 || count === 4) return "39%";
   return "32%";
 };
 
@@ -68,9 +68,11 @@ const Container = styled.div`
 
 const StyledVideo = styled.video`
   width: 100%;
+  border-radius: 15px;
 `;
 
 const StyledDiv = styled.div`
+  /* height: 100%; */
   width: ${(props: { videoWidth: string }): string => props.videoWidth};
   margin: 0.4rem 0.5rem 0.1rem 0.5rem;
   overflow: hidden;
