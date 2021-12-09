@@ -7,7 +7,7 @@ import Room from "./Room";
 const App: React.FC = () => {
   return (
     <Routes>
-      <Route path="/*" element={<Landing />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/:roomId" element={<Room />} />
     </Routes>
   );
