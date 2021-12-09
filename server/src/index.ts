@@ -1,4 +1,3 @@
-import cors from "cors";
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -24,13 +23,13 @@ const io = new Server(httpServer, {
 const rooms: Rooms = {};
 const socketToRoom: SocketToRoom = {};
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true
-  })
-);
-app.enable("trust proxy");
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     credentials: true
+//   })
+// );
+// app.enable("trust proxy");
 
 io.on("connection", socket => {
   socket.on("join room", roomId => {
